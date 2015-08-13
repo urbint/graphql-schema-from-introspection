@@ -2,7 +2,9 @@ import {
   GraphQLSchema,
   GraphQLObjectType,
   GraphQLInt,
-  GraphQLFloat
+  GraphQLFloat,
+  GraphQLBoolean,
+  GraphQLString
 } from 'graphql'
 
 function createSchema (schemaSpec) {
@@ -35,6 +37,12 @@ function createType (typeSpec) {
   }
   if (typeSpec.name === 'Float' && typeSpec.kind === 'SCALAR') {
     return GraphQLFloat
+  }
+  if (typeSpec.name === 'Boolean' && typeSpec.kind === 'SCALAR') {
+    return GraphQLBoolean
+  }
+  if (typeSpec.name === 'String' && typeSpec.kind === 'SCALAR') {
+    return GraphQLString
   }
   throw new TypeError('Unknown type: ' + JSON.stringify(typeSpec))
 }

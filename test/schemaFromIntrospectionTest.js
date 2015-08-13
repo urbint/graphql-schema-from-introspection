@@ -3,7 +3,9 @@ import {
   GraphQLSchema,
   GraphQLObjectType,
   GraphQLInt,
-  GraphQLFloat
+  GraphQLFloat,
+  GraphQLBoolean,
+  GraphQLString
 } from 'graphql'
 import { describe, it } from 'mocha'
 
@@ -18,13 +20,20 @@ describe('Schema from Introspection', () => {
         name: 'Query',
         fields: {
           int: {
-            description: 'This is a description',
             type: GraphQLInt,
             resolve: () => 123
           },
           float: {
             type: GraphQLFloat,
             resolve: () => -1.0
+          },
+          bool: {
+            type: GraphQLBoolean,
+            resolve: () => true
+          },
+          string: {
+            type: GraphQLString,
+            resolve: () => 'Hello World!'
           }
         }
       })
