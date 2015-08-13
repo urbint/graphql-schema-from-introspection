@@ -39,9 +39,15 @@ describe('Schema from Introspection', () => {
       })
     })
 
-    return graphql(schema, createSchema.introspectionQuery).then(schemaSpec => {
-      schema.should.containSubset(createSchema(schemaSpec))
-    })
+    return graphql(schema, createSchema.introspectionQuery)
+      .then(schemaSpec => {
+        let createdSchema = createSchema(schemaSpec)
+
+        return graphql(createdSchema, createSchema.introspectionQuery)
+          .then(createdSchemaSpec => {
+            createdSchemaSpec.should.eql(schemaSpec)
+          })
+      })
   })
 
 })
