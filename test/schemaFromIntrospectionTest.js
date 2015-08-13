@@ -50,4 +50,39 @@ describe('Schema from Introspection', () => {
       })
   })
 
+  it('handles custom GraphQLObjectType', () => {
+
+    let customType = new GraphQLObjectType({
+      name: 'Custom Type',
+      fields: {
+        name: {
+          type: GraphQLString,
+          resolve: () => 'A name'
+        }
+      }
+    })
+
+    let schema = new GraphQLSchema({
+      query: new GraphQLObjectType({
+        name: 'Query',
+        fields: {
+          obj: {
+            type: customType,
+            resolve: () => ({})
+          }
+        }
+      })
+    })
+
+    return graphql(schema, createSchema.introspectionQuery)
+      .then(schemaSpec => {
+        let createdSchema = createSchema(schemaSpec)
+
+        return graphql(createdSchema, createSchema.introspectionQuery)
+          .then(createdSchemaSpec => {
+            createdSchemaSpec.should.eql(schemaSpec)
+          })
+      })
+  })
+
 })

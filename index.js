@@ -6,32 +6,45 @@ import {
   GraphQLBoolean,
   GraphQLString
 } from 'graphql'
+import _ from 'lodash'
 
 function createSchema (schemaSpec) {
-  let queryFields = {}
+  let customTypes = schemaSpec.data.__schema.types
+    .filter(isCustomType)
+    .map(createType.bind(null, createFields))
 
-  schemaSpec.data.__schema.queryType.fields.forEach(fieldSpec => {
-    queryFields[fieldSpec.name] = createField(fieldSpec)
-  })
+  function createFields (fieldSpecs) {
+    return () => {
+      let fields = {}
 
-  let query = new GraphQLObjectType({
-    name: 'Query',
-    fields: queryFields
-  })
+      fieldSpecs.forEach(fieldSpec => {
+        fields[fieldSpec.name] = createField(fieldSpec, customTypes)
+      })
+
+      return fields
+    }
+  }
 
   return new GraphQLSchema({
-    query: query
+    query: _.find(customTypes, {name: schemaSpec.data.__schema.queryType.name})
   })
 }
 
-function createField (fieldSpec) {
+function createField (fieldSpec, customTypes) {
   return {
     description: fieldSpec.description ? fieldSpec.description : undefined,
-    type: createType(fieldSpec.type)
+    type: getType(fieldSpec.type, customTypes)
   }
 }
 
-function createType (typeSpec) {
+function createType (createFields, typeSpec) {
+  return new GraphQLObjectType({
+    name: typeSpec.name,
+    fields: createFields(typeSpec.fields)
+  })
+}
+
+function getType (typeSpec, customTypes) {
   if (typeSpec.name === 'Int' && typeSpec.kind === 'SCALAR') {
     return GraphQLInt
   }
@@ -44,12 +57,27 @@ function createType (typeSpec) {
   if (typeSpec.name === 'String' && typeSpec.kind === 'SCALAR') {
     return GraphQLString
   }
+  let customType = _.find(customTypes, {name: typeSpec.name})
+  if (customType) {
+    return customType
+  }
   throw new TypeError('Unknown type: ' + JSON.stringify(typeSpec))
+}
+
+function isCustomType (type) {
+  return !isBuiltInType(type)
+}
+
+let builtInTypes = ['Int', 'Float', 'Boolean', 'String', '__Schema', '__Type', '__TypeKind', '__Field', '__InputValue', '__EnumValue', '__Directive']
+
+function isBuiltInType (type) {
+  return builtInTypes.indexOf(type.name) !== -1
 }
 
 createSchema.introspectionQuery = `{
   __schema {
-    mutationType {
+    types {
+      name, description
       fields {
         name, description
         type {
@@ -69,25 +97,11 @@ createSchema.introspectionQuery = `{
         }
       }
     }
+    mutationType {
+      name
+    }
     queryType {
-      fields {
-        name, description
-        type {
-          name, kind
-          ofType {
-            name, kind
-          }
-        }
-        args {
-          name, description
-          type {
-            name, kind
-            ofType {
-              name, kind
-            }
-          }
-        }
-      }
+      name
     }
   }
 }`
