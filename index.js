@@ -11,18 +11,13 @@ import _ from 'lodash'
 function createSchema (schemaSpec) {
   let customTypes = schemaSpec.data.__schema.types
     .filter(isCustomType)
-    .map(createType.bind(null, createFields))
+    .map(createType)
 
-  function createFields (fieldSpecs) {
-    return () => {
-      let fields = {}
-
-      fieldSpecs.forEach(fieldSpec => {
-        fields[fieldSpec.name] = createField(fieldSpec, customTypes)
-      })
-
-      return fields
-    }
+  function createType (typeSpec) {
+    return new GraphQLObjectType({
+      name: typeSpec.name,
+      fields: () => createFields(typeSpec.fields, customTypes)
+    })
   }
 
   return new GraphQLSchema({
@@ -30,18 +25,21 @@ function createSchema (schemaSpec) {
   })
 }
 
+function createFields (fieldSpecs, customTypes) {
+  let fields = {}
+
+  fieldSpecs.forEach(fieldSpec => {
+    fields[fieldSpec.name] = createField(fieldSpec, customTypes)
+  })
+
+  return fields
+}
+
 function createField (fieldSpec, customTypes) {
   return {
     description: fieldSpec.description ? fieldSpec.description : undefined,
     type: getType(fieldSpec.type, customTypes)
   }
-}
-
-function createType (createFields, typeSpec) {
-  return new GraphQLObjectType({
-    name: typeSpec.name,
-    fields: createFields(typeSpec.fields)
-  })
 }
 
 function getType (typeSpec, customTypes) {

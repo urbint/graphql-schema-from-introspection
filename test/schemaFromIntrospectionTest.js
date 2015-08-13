@@ -13,7 +13,7 @@ import createSchema from '../'
 
 describe('Schema from Introspection', () => {
 
-  it('handles built in scalars', () => {
+  it('supports built in scalars', () => {
 
     let schema = new GraphQLSchema({
       query: new GraphQLObjectType({
@@ -50,7 +50,7 @@ describe('Schema from Introspection', () => {
       })
   })
 
-  it('handles custom GraphQLObjectType', () => {
+  it('supports custom GraphQLObjectType', () => {
 
     let customType = new GraphQLObjectType({
       name: 'Custom Type',
