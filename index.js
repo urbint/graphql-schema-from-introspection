@@ -38,7 +38,26 @@ function createFields (fieldSpecs, customTypes) {
 function createField (fieldSpec, customTypes) {
   return {
     description: fieldSpec.description ? fieldSpec.description : undefined,
-    type: getType(fieldSpec.type, customTypes)
+    type: getType(fieldSpec.type, customTypes),
+    args: createArgs(fieldSpec.args, customTypes)
+  }
+}
+
+function createArgs (argSpecs, customTypes) {
+  if (!argSpecs) return undefined
+
+  let args = {}
+
+  argSpecs.forEach(argSpec => {
+    args[argSpec.name] = createArg(argSpec, customTypes)
+  })
+
+  return args
+}
+
+function createArg (argSpec, customTypes) {
+  return {
+    type: getType(argSpec.type, customTypes)
   }
 }
 

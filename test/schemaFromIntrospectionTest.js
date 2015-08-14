@@ -85,4 +85,34 @@ describe('Schema from Introspection', () => {
       })
   })
 
+  it('supports fields with arguments', () => {
+
+    let schema = new GraphQLSchema({
+      query: new GraphQLObjectType({
+        name: 'Query',
+        fields: {
+          aQuery: {
+            type: GraphQLInt,
+            args: {
+              id: {
+                type: GraphQLInt
+              }
+            },
+            resolve: () => 1
+          }
+        }
+      })
+    })
+
+    return graphql(schema, createSchema.introspectionQuery)
+      .then(schemaSpec => {
+        let createdSchema = createSchema(schemaSpec)
+
+        return graphql(createdSchema, createSchema.introspectionQuery)
+          .then(createdSchemaSpec => {
+            createdSchemaSpec.should.eql(schemaSpec)
+          })
+      })
+  })
+
 })
