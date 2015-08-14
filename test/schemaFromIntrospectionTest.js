@@ -11,6 +11,20 @@ import { describe, it } from 'mocha'
 
 import createSchema from '../'
 
+function introspect (schema) {
+  var result = {}
+
+  return graphql(schema, createSchema.introspectionQuery)
+    .then(schemaSpec => {
+      result.original = schemaSpec
+      return graphql(createSchema(schemaSpec), createSchema.introspectionQuery)
+    })
+    .then(createdSchemaSpec => {
+      result.created = createdSchemaSpec
+      return result
+    })
+}
+
 describe('Schema from Introspection', () => {
 
   it('supports built in scalars', () => {
@@ -39,15 +53,9 @@ describe('Schema from Introspection', () => {
       })
     })
 
-    return graphql(schema, createSchema.introspectionQuery)
-      .then(schemaSpec => {
-        let createdSchema = createSchema(schemaSpec)
-
-        return graphql(createdSchema, createSchema.introspectionQuery)
-          .then(createdSchemaSpec => {
-            createdSchemaSpec.should.eql(schemaSpec)
-          })
-      })
+    return introspect(schema).then(schemaSpecs => {
+      schemaSpecs.created.should.eql(schemaSpecs.original)
+    })
   })
 
   it('supports custom GraphQLObjectType', () => {
@@ -74,15 +82,9 @@ describe('Schema from Introspection', () => {
       })
     })
 
-    return graphql(schema, createSchema.introspectionQuery)
-      .then(schemaSpec => {
-        let createdSchema = createSchema(schemaSpec)
-
-        return graphql(createdSchema, createSchema.introspectionQuery)
-          .then(createdSchemaSpec => {
-            createdSchemaSpec.should.eql(schemaSpec)
-          })
-      })
+    return introspect(schema).then(schemaSpecs => {
+      schemaSpecs.created.should.eql(schemaSpecs.original)
+    })
   })
 
   it('supports fields with arguments', () => {
@@ -104,15 +106,9 @@ describe('Schema from Introspection', () => {
       })
     })
 
-    return graphql(schema, createSchema.introspectionQuery)
-      .then(schemaSpec => {
-        let createdSchema = createSchema(schemaSpec)
-
-        return graphql(createdSchema, createSchema.introspectionQuery)
-          .then(createdSchemaSpec => {
-            createdSchemaSpec.should.eql(schemaSpec)
-          })
-      })
+    return introspect(schema).then(schemaSpecs => {
+      schemaSpecs.created.should.eql(schemaSpecs.original)
+    })
   })
 
 })
