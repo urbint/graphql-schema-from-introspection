@@ -9,7 +9,9 @@ import {
 import _ from 'lodash'
 
 function createSchema (schemaSpec) {
-  let customTypes = schemaSpec.data.__schema.types
+  let schema = schemaSpec.data.__schema
+
+  let customTypes = schema.types
     .filter(isCustomType)
     .map(createType)
 
@@ -21,8 +23,19 @@ function createSchema (schemaSpec) {
   }
 
   return new GraphQLSchema({
-    query: _.find(customTypes, {name: schemaSpec.data.__schema.queryType.name})
+    query: findQueryType(schema, customTypes),
+    mutation: findMutationType(schema, customTypes)
   })
+}
+
+function findQueryType (schema, customTypes) {
+  if (!schema.queryType || !schema.queryType.name) return undefined
+  return _.find(customTypes, {name: schema.queryType.name})
+}
+
+function findMutationType (schema, customTypes) {
+  if (!schema.mutationType || !schema.mutationType.name) return undefined
+  return _.find(customTypes, {name: schema.mutationType.name})
 }
 
 function createFields (fieldSpecs, customTypes) {

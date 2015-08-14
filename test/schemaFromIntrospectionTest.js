@@ -111,4 +111,35 @@ describe('Schema from Introspection', () => {
     })
   })
 
+  it('supports mutation', () => {
+
+    let schema = new GraphQLSchema({
+      query: new GraphQLObjectType({
+        name: 'Query',
+        fields: {}
+      }),
+      mutation: new GraphQLObjectType({
+        name: 'Mutation',
+        fields: {
+          rand: {
+            type: GraphQLInt,
+            args: {
+              min: {
+                type: GraphQLInt
+              },
+              max: {
+                type: GraphQLInt
+              }
+            },
+            resolve: (_, {min, max}) => Math.random() * max + min
+          }
+        }
+      })
+    })
+
+    return introspect(schema).then(schemaSpecs => {
+      schemaSpecs.created.should.eql(schemaSpecs.original)
+    })
+  })
+
 })
