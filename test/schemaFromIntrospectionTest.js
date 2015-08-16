@@ -6,7 +6,8 @@ import {
   GraphQLFloat,
   GraphQLBoolean,
   GraphQLString,
-  GraphQLList
+  GraphQLList,
+  GraphQLNonNull
 } from 'graphql'
 import { describe, it } from 'mocha'
 
@@ -88,7 +89,7 @@ describe('Schema from Introspection', () => {
     })
   })
 
-  it('supports lists', () => {
+  it('supports list wrapping type', () => {
 
     let customType = new GraphQLObjectType({
       name: 'Custom Type',
@@ -115,6 +116,43 @@ describe('Schema from Introspection', () => {
           customTypeList: {
             type: new GraphQLList(customType),
             resolve: () => []
+          }
+        }
+      })
+    })
+
+    return introspect(schema).then(schemaSpecs => {
+      schemaSpecs.created.should.eql(schemaSpecs.original)
+    })
+  })
+
+  it('supports non null wrapping type', () => {
+
+    let customType = new GraphQLObjectType({
+      name: 'Custom Type',
+      fields: {
+        name: {
+          type: GraphQLString,
+          resolve: () => 'A name'
+        }
+      }
+    })
+
+    let schema = new GraphQLSchema({
+      query: new GraphQLObjectType({
+        name: 'Query',
+        fields: {
+          nonNullString: {
+            type: new GraphQLNonNull(GraphQLString),
+            resolve: () => 'foo'
+          },
+          nonNullInt: {
+            type: new GraphQLNonNull(GraphQLInt),
+            resolve: () => 1337
+          },
+          nonNullObj: {
+            type: new GraphQLNonNull(customType),
+            resolve: () => {}
           }
         }
       })
