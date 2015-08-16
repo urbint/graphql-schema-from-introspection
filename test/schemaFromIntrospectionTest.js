@@ -116,7 +116,12 @@ describe('Schema from Introspection', () => {
     let schema = new GraphQLSchema({
       query: new GraphQLObjectType({
         name: 'Query',
-        fields: {}
+        fields: {
+          dummy: {
+            type: GraphQLString,
+            resolve: () => 'a query type with at least one field is required by graphql'
+          }
+        }
       }),
       mutation: new GraphQLObjectType({
         name: 'Mutation',
