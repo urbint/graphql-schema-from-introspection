@@ -1,8 +1,8 @@
 {
   "name": "graphql-schema-from-introspection",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "converts graphql introspection data to a local graphql schema",
-  "main": "index.js",
+  "main": "dist/index.js",
   "dependencies": {
     "babel-runtime": "^5.8.20",
     "graphql": "^0.3.0",
@@ -21,6 +21,9 @@
     "test-watch": "mocha -w",
     "build": "rm -rf dist/* && babel index.js --out-dir dist"
   },
+  "files": [
+    "dist/index.js"
+  ],
   "author": "Gabriel Falkenberg <gabriel.falkenberg@gmail.com>",
   "license": "MIT"
 }

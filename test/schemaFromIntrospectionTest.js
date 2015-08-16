@@ -9,7 +9,7 @@ import {
 } from 'graphql'
 import { describe, it } from 'mocha'
 
-import createSchema from '../'
+import createSchema from '../index'
 
 function introspect (schema) {
   var result = {}
