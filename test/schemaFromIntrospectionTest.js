@@ -5,7 +5,8 @@ import {
   GraphQLInt,
   GraphQLFloat,
   GraphQLBoolean,
-  GraphQLString
+  GraphQLString,
+  GraphQLList
 } from 'graphql'
 import { describe, it } from 'mocha'
 
@@ -77,6 +78,43 @@ describe('Schema from Introspection', () => {
           obj: {
             type: customType,
             resolve: () => ({})
+          }
+        }
+      })
+    })
+
+    return introspect(schema).then(schemaSpecs => {
+      schemaSpecs.created.should.eql(schemaSpecs.original)
+    })
+  })
+
+  it('supports lists', () => {
+
+    let customType = new GraphQLObjectType({
+      name: 'Custom Type',
+      fields: {
+        name: {
+          type: GraphQLString,
+          resolve: () => 'A name'
+        }
+      }
+    })
+
+    let schema = new GraphQLSchema({
+      query: new GraphQLObjectType({
+        name: 'Query',
+        fields: {
+          stringList: {
+            type: new GraphQLList(GraphQLString),
+            resolve: () => []
+          },
+          intList: {
+            type: new GraphQLList(GraphQLInt),
+            resolve: () => []
+          },
+          customTypeList: {
+            type: new GraphQLList(customType),
+            resolve: () => []
           }
         }
       })

@@ -4,7 +4,8 @@ import {
   GraphQLInt,
   GraphQLFloat,
   GraphQLBoolean,
-  GraphQLString
+  GraphQLString,
+  GraphQLList
 } from 'graphql'
 import _ from 'lodash'
 
@@ -91,7 +92,11 @@ function getType (typeSpec, customTypes) {
   if (customType) {
     return customType
   }
-  throw new TypeError('Unknown type: ' + JSON.stringify(typeSpec))
+  if (typeSpec.kind === 'LIST') {
+    let ofType = getType(typeSpec.ofType, customTypes)
+    return new GraphQLList(ofType)
+  }
+  throw new TypeError(`Unknown type: ${JSON.stringify(typeSpec)}, custom types: ${JSON.stringify(customTypes)}`)
 }
 
 function isCustomType (type) {
