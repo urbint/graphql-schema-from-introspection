@@ -66,7 +66,8 @@ function createField (fieldSpec, customTypes) {
   return {
     description: fieldSpec.description ? fieldSpec.description : undefined,
     type: getType(fieldSpec.type, customTypes),
-    args: createArgs(fieldSpec.args, customTypes)
+    args: createArgs(fieldSpec.args, customTypes),
+    resolve: () => null
   }
 }
 

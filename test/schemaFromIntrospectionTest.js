@@ -252,4 +252,41 @@ describe('Schema from Introspection', () => {
     })
   })
 
+  it('creates a schema that can be queried with no errors', () => {
+
+    let customType = new GraphQLObjectType({
+      name: 'Custom Type',
+      fields: {
+        name: {
+          type: GraphQLString,
+          resolve: () => 'A name'
+        }
+      }
+    })
+
+    let schema = new GraphQLSchema({
+      query: new GraphQLObjectType({
+        name: 'Query',
+        fields: {
+          scalar: {
+            type: GraphQLString,
+            resolve: () => 'a string'
+          },
+          obj: {
+            type: customType,
+            resolve: () => {}
+          }
+        }
+      })
+    })
+
+    let validQuery = '{scalar, obj {name}}'
+
+    return graphql(schema, createSchema.introspectionQuery).then(schemaSpec => {
+      return graphql(createSchema(schemaSpec), validQuery)
+    }).then(queryResults => {
+      queryResults.should.not.have.property('errors')
+    })
+  })
+
 })
