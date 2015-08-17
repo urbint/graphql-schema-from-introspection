@@ -1,6 +1,7 @@
 import {
   graphql,
   GraphQLSchema,
+  GraphQLScalarType,
   GraphQLObjectType,
   GraphQLInt,
   GraphQLFloat,
@@ -89,6 +90,33 @@ describe('Schema from Introspection', () => {
     })
   })
 
+  it('supports custom scalar', () => {
+
+    let customScalarType = new GraphQLScalarType({
+      name: 'Odd',
+      type: GraphQLInt,
+      serialize (value) {
+        return value % 2 === 1 ? value : null
+      }
+    })
+
+    let schema = new GraphQLSchema({
+      query: new GraphQLObjectType({
+        name: 'Query',
+        fields: {
+          customScalar: {
+            type: customScalarType,
+            resolve: () => 1
+          }
+        }
+      })
+    })
+
+    return introspect(schema).then(schemaSpecs => {
+      schemaSpecs.created.should.eql(schemaSpecs.original)
+    })
+  })
+
   it('supports list wrapping type', () => {
 
     let customType = new GraphQLObjectType({
@@ -152,7 +180,8 @@ describe('Schema from Introspection', () => {
           },
           nonNullObj: {
             type: new GraphQLNonNull(customType),
-            resolve: () => {}
+            resolve: () => {
+            }
           }
         }
       })

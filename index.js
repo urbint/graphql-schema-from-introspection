@@ -1,6 +1,7 @@
 import {
   GraphQLSchema,
   GraphQLObjectType,
+  GraphQLScalarType,
   GraphQLInt,
   GraphQLFloat,
   GraphQLBoolean,
@@ -18,10 +19,21 @@ function createSchema (schemaSpec) {
     .map(createType)
 
   function createType (typeSpec) {
-    return new GraphQLObjectType({
-      name: typeSpec.name,
-      fields: () => createFields(typeSpec.fields, customTypes)
-    })
+    if (typeSpec.kind === 'SCALAR') {
+      return new GraphQLScalarType({
+        name: typeSpec.name,
+        serialize (value) {
+          return value
+        }
+      })
+    } else if (typeSpec.kind === 'OBJECT') {
+      return new GraphQLObjectType({
+        name: typeSpec.name,
+        fields: () => createFields(typeSpec.fields, customTypes)
+      })
+    } else {
+      throw new Error(`Cannot create type, unknown kind: ${JSON.stringify(typeSpec)}`)
+    }
   }
 
   return new GraphQLSchema({
@@ -117,7 +129,7 @@ function isBuiltInType (type) {
 createSchema.introspectionQuery = `{
   __schema {
     types {
-      name, description
+      name, description, kind
       fields {
         name, description
         type {
