@@ -1,0 +1,5 @@
+# Put project related experiments and code that you don't want to checkin in
+# this directory. It will then be close to the project but won't litter your
+# git status. Since the directory has a leading dot it will not have to conform
+# to the project's code style.
+*
