@@ -11,7 +11,7 @@ import {
 } from 'graphql'
 import _ from 'lodash'
 
-function createSchema (schemaSpec) {
+function createSchema (schemaSpec, customResolve) {
   let schema = schemaSpec.data.__schema
 
   let customTypes = schema.types
@@ -29,7 +29,7 @@ function createSchema (schemaSpec) {
     } else if (typeSpec.kind === 'OBJECT') {
       return new GraphQLObjectType({
         name: typeSpec.name,
-        fields: () => createFields(typeSpec.fields, customTypes)
+        fields: () => createFields(typeSpec.fields, customTypes, customResolve)
       })
     } else {
       throw new Error(`Cannot create type, unknown kind: ${JSON.stringify(typeSpec)}`)
@@ -52,22 +52,22 @@ function findMutationType (schema, customTypes) {
   return _.find(customTypes, {name: schema.mutationType.name})
 }
 
-function createFields (fieldSpecs, customTypes) {
+function createFields (fieldSpecs, customTypes, customResolve) {
   let fields = {}
 
   fieldSpecs.forEach(fieldSpec => {
-    fields[fieldSpec.name] = createField(fieldSpec, customTypes)
+    fields[fieldSpec.name] = createField(fieldSpec, customTypes, customResolve)
   })
 
   return fields
 }
 
-function createField (fieldSpec, customTypes) {
+function createField (fieldSpec, customTypes, customResolve) {
   return {
     description: fieldSpec.description ? fieldSpec.description : undefined,
     type: getType(fieldSpec.type, customTypes),
     args: createArgs(fieldSpec.args, customTypes),
-    resolve: () => null
+    resolve: customResolve ? customResolve(fieldSpec) : () => null
   }
 }
 
