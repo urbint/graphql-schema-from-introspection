@@ -29,9 +29,7 @@ function introspect (schema) {
 }
 
 describe('Schema from Introspection', () => {
-
   it('supports built in scalars', () => {
-
     let schema = new GraphQLSchema({
       query: new GraphQLObjectType({
         name: 'Query',
@@ -62,7 +60,6 @@ describe('Schema from Introspection', () => {
   })
 
   it('supports custom GraphQLObjectType', () => {
-
     let customType = new GraphQLObjectType({
       name: 'CustomType',
       fields: {
@@ -91,7 +88,6 @@ describe('Schema from Introspection', () => {
   })
 
   it('supports custom scalar', () => {
-
     let customScalarType = new GraphQLScalarType({
       name: 'Odd',
       type: GraphQLInt,
@@ -118,7 +114,6 @@ describe('Schema from Introspection', () => {
   })
 
   it('supports list wrapping type', () => {
-
     let customType = new GraphQLObjectType({
       name: 'CustomType',
       fields: {
@@ -155,7 +150,6 @@ describe('Schema from Introspection', () => {
   })
 
   it('supports non null wrapping type', () => {
-
     let customType = new GraphQLObjectType({
       name: 'CustomType',
       fields: {
@@ -193,7 +187,6 @@ describe('Schema from Introspection', () => {
   })
 
   it('supports fields with arguments', () => {
-
     let schema = new GraphQLSchema({
       query: new GraphQLObjectType({
         name: 'Query',
@@ -217,7 +210,6 @@ describe('Schema from Introspection', () => {
   })
 
   it('supports mutation', () => {
-
     let schema = new GraphQLSchema({
       query: new GraphQLObjectType({
         name: 'Query',
@@ -253,7 +245,6 @@ describe('Schema from Introspection', () => {
   })
 
   it('creates a schema that can be queried with no errors', () => {
-
     let customType = new GraphQLObjectType({
       name: 'CustomType',
       fields: {
@@ -288,5 +279,4 @@ describe('Schema from Introspection', () => {
       queryResults.should.not.have.property('errors')
     })
   })
-
 })
