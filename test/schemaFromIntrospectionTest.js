@@ -64,7 +64,7 @@ describe('Schema from Introspection', () => {
   it('supports custom GraphQLObjectType', () => {
 
     let customType = new GraphQLObjectType({
-      name: 'Custom Type',
+      name: 'CustomType',
       fields: {
         name: {
           type: GraphQLString,
@@ -120,7 +120,7 @@ describe('Schema from Introspection', () => {
   it('supports list wrapping type', () => {
 
     let customType = new GraphQLObjectType({
-      name: 'Custom Type',
+      name: 'CustomType',
       fields: {
         name: {
           type: GraphQLString,
@@ -157,7 +157,7 @@ describe('Schema from Introspection', () => {
   it('supports non null wrapping type', () => {
 
     let customType = new GraphQLObjectType({
-      name: 'Custom Type',
+      name: 'CustomType',
       fields: {
         name: {
           type: GraphQLString,
@@ -255,7 +255,7 @@ describe('Schema from Introspection', () => {
   it('creates a schema that can be queried with no errors', () => {
 
     let customType = new GraphQLObjectType({
-      name: 'Custom Type',
+      name: 'CustomType',
       fields: {
         name: {
           type: GraphQLString,
