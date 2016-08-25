@@ -1,6 +1,7 @@
 import {
   GraphQLSchema,
   GraphQLObjectType,
+  GraphQLInputObjectType,
   GraphQLScalarType,
   GraphQLInt,
   GraphQLFloat,
@@ -31,8 +32,22 @@ function createSchema (schemaSpec, customResolve) {
         name: typeSpec.name,
         fields: () => createFields(typeSpec.fields, customTypes, customResolve)
       })
+    } else if (typeSpec.kind === 'ENUM') {
+      console.log("WARN: Enum types not supported by graphql-schema-from-introspection");
+    } else if (typeSpec.kind === 'INPUT_OBJECT') {
+      return new GraphQLInputObjectType({
+        name: typeSpec.name,
+        fields: function fields() {
+          if (!typeSpec.fields) {
+            typeSpec.fields = [
+              {type: {ofType: null, name: 'String', kind: 'SCALAR'}, name: 'inputField'}
+            ]
+          }
+          return createFields(typeSpec.fields, customTypes, customResolve);
+        }
+      });
     } else {
-      throw new Error(`Cannot create type, unknown kind: ${JSON.stringify(typeSpec)}`)
+      console.log(new Error('Cannot create type, unknown kind: ' + JSON.stringify(typeSpec)));
     }
   }
 
