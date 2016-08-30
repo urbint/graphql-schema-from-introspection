@@ -38,12 +38,7 @@ function createSchema (schemaSpec, customResolve) {
       return new GraphQLInputObjectType({
         name: typeSpec.name,
         fields: function fields() {
-          if (!typeSpec.fields) {
-            typeSpec.fields = [
-              {type: {ofType: null, name: 'String', kind: 'SCALAR'}, name: 'inputField'}
-            ]
-          }
-          return createFields(typeSpec.fields, customTypes, customResolve);
+          return createFields(typeSpec.inputFields, customTypes, customResolve);
         }
       });
     } else {
@@ -152,6 +147,27 @@ createSchema.introspectionQuery = `{
           name, kind
           ofType {
             name, kind
+          }
+        }
+        args {
+          name, description
+          type {
+            name, kind
+            ofType {
+              name, kind
+            }
+          }
+        }
+      }
+      inputFields {
+        name
+        type {
+          name, kind
+          ofType {
+            name, kind
+            ofType {
+              name, kind
+            }
           }
         }
         args {
