@@ -38,10 +38,7 @@ function createSchema(schemaSpec, customResolve) {
       return new _graphql.GraphQLInputObjectType({
         name: typeSpec.name,
         fields: function fields() {
-          if (!typeSpec.fields) {
-            typeSpec.fields = [{ type: { ofType: null, name: 'String', kind: 'SCALAR' }, name: 'inputField' }];
-          }
-          return createFields(typeSpec.fields, customTypes, customResolve);
+          return createFields(typeSpec.inputFields, customTypes, customResolve);
         }
       });
     } else {
@@ -142,7 +139,7 @@ function isBuiltInType(type) {
   return builtInTypes.indexOf(type.name) !== -1;
 }
 
-createSchema.introspectionQuery = '{\n  __schema {\n    types {\n      name, description, kind\n      fields {\n        name, description\n        type {\n          name, kind\n          ofType {\n            name, kind\n          }\n        }\n        args {\n          name, description\n          type {\n            name, kind\n            ofType {\n              name, kind\n            }\n          }\n        }\n      }\n    }\n    mutationType {\n      name\n    }\n    queryType {\n      name\n    }\n  }\n}';
+createSchema.introspectionQuery = '{\n  __schema {\n    types {\n      name, description, kind\n      fields {\n        name, description\n        type {\n          name, kind\n          ofType {\n            name, kind\n          }\n        }\n        args {\n          name, description\n          type {\n            name, kind\n            ofType {\n              name, kind\n            }\n          }\n        }\n      }\n      inputFields {\n        name\n        type {\n          name, kind\n          ofType {\n            name, kind\n            ofType {\n              name, kind\n            }\n          }\n        }\n        args {\n          name, description\n          type {\n            name, kind\n            ofType {\n              name, kind\n            }\n          }\n        }\n      }\n    }\n    mutationType {\n      name\n    }\n    queryType {\n      name\n    }\n  }\n}';
 
 exports['default'] = createSchema;
 module.exports = exports['default'];
